@@ -1,0 +1,23 @@
+#wrapper {
+  @apply w-full h-[100vh] bg-gray-50 flex items-center justify-center;
+  #form {
+    .form_group {
+      @apply w-80 pb-4 px-6 lg:px-0;
+      input {
+        @apply w-full border-none bg-gray-200 py-3 px-4 rounded-lg placeholder-gray-500;
+      }
+
+      button {
+        @apply w-full py-3 rounded-lg bg-black text-white font-medium;
+      }
+
+      span {
+        @apply text-gray-900;
+      }
+
+      .link {
+        @apply text-blue-600 font-medium underline underline-offset-1 hover:text-blue-700;
+      }
+    }
+  }
+}
