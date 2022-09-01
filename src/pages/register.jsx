@@ -4,7 +4,7 @@ import Meta from '../components/Meta';
 import logo from '../assets/belendroid.png';
 import style from '../styles/form.module.scss';
 
-export default function Home() {
+export default function Register() {
   return (
     <>
       <Meta title='Belendroid: Register'></Meta>
@@ -47,11 +47,11 @@ export default function Home() {
           </div>
 
           <div className={style.form_group}>
-            <button type='submit'>Sign in</button>
+            <button type='submit'>Register</button>
           </div>
 
           <div className={style.form_group}>
-            <span>Don&apos;t have an account yet? </span>
+            <span>Already have an account? </span>
             <Link href='/'>
               <a className={style.link}>Sign in</a>
             </Link>
