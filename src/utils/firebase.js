@@ -14,15 +14,6 @@ const firebaseConfig = {
   appId: '1:35299489032:web:19f2f396569d72f238e8bd',
 };
 
-/* const firebaseConfig = {
-  apiKey: process.env.API_KEY,
-  authDomain: process.env.AUTH_DOMAIN,
-  projectId: process.env.PROJECT_ID,
-  storageBucket: process.env.STORAGE_BUCKET,
-  messagingSenderId: process.env.MESSAGING_SENDER_ID,
-  appId: process.env.APP_ID,
-}; */
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
