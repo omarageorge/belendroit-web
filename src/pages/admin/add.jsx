@@ -8,7 +8,7 @@ import Title from '../../components/admin/Title';
 import style from '../../styles/admin.module.scss';
 
 export default function Add() {
-  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   return (
     <>
@@ -45,10 +45,10 @@ export default function Add() {
             <div className={style.group}>
               <button
                 type='submit'
-                disabled={loading && true}
+                disabled={saving && true}
                 className=' bg-gray-900 hover:bg-gray-800 text-white py-4 px-8 rounded-md'
               >
-                {loading ? (
+                {saving ? (
                   <ScaleLoader color='white' height='1rem' />
                 ) : (
                   <span className='flex  items-center gap-x-2'>
