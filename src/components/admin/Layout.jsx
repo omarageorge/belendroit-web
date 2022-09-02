@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { FaList, FaPlusCircle } from 'react-icons/fa';
+import { FaList, FaPlusCircle, FaBell } from 'react-icons/fa';
 
 import Meta from '../Meta';
 import Loader from '../Loader';
@@ -75,12 +75,23 @@ export default function Layout({ children }) {
             </a>
           </Link>
 
+          <Link href='/admin/notifications'>
+            <a className='flex items-center gap-x-3 py-3 px-4 rounded-md text-white  bg-slate-800 hover:bg-gray-700 transition-all delay-200  ease-linear'>
+              <FaBell />
+              Post Notification
+            </a>
+          </Link>
+
           <a
             onClick={logOutUser}
             className='flex items-center justify-center py-3 px-4 rounded-md text-white  bg-red-600 hover:bg-red-700 transition-all delay-200  ease-linear cursor-pointer'
           >
             Logout
           </a>
+
+          <span className='block w-full text-md text-gray-400 font-normal self-end '>
+            Bar name
+          </span>
         </aside>
 
         {/*  Main content */}

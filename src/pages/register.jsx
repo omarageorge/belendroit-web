@@ -6,15 +6,17 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
 } from 'firebase/auth';
+import { doc, setDoc, collection, addDoc } from 'firebase/firestore';
 
 import Meta from '../components/Meta';
 import { auth, db } from '../utils/firebase';
 import style from '../styles/form.module.scss';
 
 export default function Register() {
-  const [loading, setLoading] = useState(false);
-
   const router = useRouter();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [formData, setFormData] = useState({
     hangout: '',
@@ -39,11 +41,17 @@ export default function Register() {
         formData.password
       );
 
-      router.push('/admin');
+      await setDoc(doc(db, 'hangouts', user.uid), {
+        uid: user.uid,
+        hangout: formData.hangout,
+        city: formData.city,
+        email: formData.email,
+      });
 
       setLoading(false);
     } catch (error) {
-      console.error(error.message);
+      router.push('/admin');
+      setError(error.message);
       setLoading(false);
     }
   };
@@ -72,6 +80,12 @@ export default function Register() {
             <span className='font-medium text-xl'>Register Hangout Spot</span>
           </div>
 
+          {error !== null && (
+            <div className={`${style.form_group} text-center cursor-pointer`}>
+              <p className='text-red-600'>{error}</p>
+            </div>
+          )}
+
           <div className={style.form_group}>
             <input
               type='text'
@@ -79,7 +93,7 @@ export default function Register() {
               value={formData.hangout}
               onChange={handleInputChange}
               placeholder='Name of the place'
-              // required
+              required
             />
           </div>
 
@@ -90,7 +104,7 @@ export default function Register() {
               value={formData.city}
               onChange={handleInputChange}
               placeholder='City'
-              // required
+              required
             />
           </div>
 
@@ -101,7 +115,7 @@ export default function Register() {
               value={formData.email}
               onChange={handleInputChange}
               placeholder='Email address'
-              // required
+              required
             />
           </div>
 
@@ -112,7 +126,7 @@ export default function Register() {
               value={formData.password}
               onChange={handleInputChange}
               placeholder='Secure password'
-              // required
+              required
             />
           </div>
 
