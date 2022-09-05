@@ -2,17 +2,17 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import ScaleLoader from 'react-spinners/ScaleLoader';
-import { FaCamera, FaPlusCircle } from 'react-icons/fa';
+import { FaSave, FaTimes } from 'react-icons/fa';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
+import { doc, setDoc, getDocFromServer } from 'firebase/firestore';
 
-import Meta from '../../components/Meta';
-import Layout from '../../components/admin/Layout';
-import Title from '../../components/admin/Title';
-import { auth, db, storage } from '../../utils/firebase';
-import style from '../../styles/admin.module.scss';
+import Meta from '../../../components/Meta';
+import Layout from '../../../components/admin/Layout';
+import Title from '../../../components/admin/Title';
+import { db, storage } from '../../../utils/firebase';
+import style from '../../../styles/admin.module.scss';
 
-export default function Add() {
+export default function Add({ offer }) {
   const router = useRouter();
 
   const [saving, setSaving] = useState(false);
@@ -20,8 +20,8 @@ export default function Add() {
   const [isFilePicked, setIsFilePicked] = useState(false);
 
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
+    title: offer.data.title,
+    description: offer.data.description,
   });
 
   const handleImageChange = (e) => {
@@ -38,26 +38,36 @@ export default function Add() {
 
     setSaving(true);
 
-    const storageRef = ref(storage, selectedFile.name);
-    const docRef = doc(db, 'hangouts', auth.currentUser.uid);
-
     try {
-      const docSnapShot = await getDoc(docRef);
-      const hangoutData = docSnapShot.data();
+      if (isFilePicked) {
+        const storageRef = ref(storage, selectedFile.name);
+        await uploadBytes(storageRef, selectedFile);
+        const imageUrl = await getDownloadURL(storageRef);
 
-      await uploadBytes(storageRef, selectedFile);
-      const imageUrl = await getDownloadURL(storageRef);
+        await setDoc(
+          doc(db, 'offers', offer.id),
+          {
+            image: imageUrl,
+            title: formData.title,
+            description: formData.description,
+          },
+          { merge: true }
+        );
 
-      await addDoc(collection(db, 'offers'), {
-        image: imageUrl,
-        title: formData.title,
-        description: formData.description,
-        city: hangoutData.city,
-        hangout: hangoutData.hangout,
-      });
+        setSaving(false);
+        router.push('/admin');
+      }
+
+      await setDoc(
+        doc(db, 'offers', offer.id),
+        {
+          title: formData.title,
+          description: formData.description,
+        },
+        { merge: true }
+      );
 
       setSaving(false);
-
       router.push('/admin');
     } catch (error) {
       setSaving(false);
@@ -68,7 +78,7 @@ export default function Add() {
     <>
       <Meta title='Admin: Create New Offer' />
       <Layout>
-        <Title>Create New Offer</Title>
+        <Title>Edit Offer</Title>
 
         <section id={style.wrapper}>
           <form onSubmit={handleFormSubmission}>
@@ -94,14 +104,16 @@ export default function Add() {
                       alt=''
                     />
                   ) : (
-                    <div className='flex flex-col items-center justify-center'>
-                      <span className='text-5xl text-gray-500'>
-                        <FaCamera />
-                      </span>
-                      <span className='text-md  text-gray-500 pt-4'>
-                        Click to select an image
-                      </span>
-                    </div>
+                    <Image
+                      src={offer.data.image}
+                      width='200'
+                      height='200'
+                      style={{
+                        display: 'block',
+                        borderRadius: '5px',
+                      }}
+                      alt=''
+                    />
                   )}
                 </div>
               </label>
@@ -136,9 +148,19 @@ export default function Add() {
                   <ScaleLoader color='white' height='1rem' />
                 ) : (
                   <span className='flex  items-center gap-x-2'>
-                    <FaPlusCircle /> <span>Add</span>
+                    <FaSave /> <span>Save</span>
                   </span>
                 )}
+              </button>
+              <span className='pr-4'></span>
+              <button
+                type='reset'
+                onClick={() => router.push('/admin')}
+                className=' bg-red-700 hover:bg-red-900 text-white py-4 px-8 rounded-md'
+              >
+                <span className='flex  items-center gap-x-2'>
+                  <FaTimes /> <span>Cancel</span>
+                </span>
               </button>
             </div>
           </form>
@@ -146,4 +168,19 @@ export default function Add() {
       </Layout>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  let docSnapShot;
+  const { offer } = context.query;
+
+  try {
+    docSnapShot = await getDocFromServer(doc(db, 'offers', offer));
+  } catch (error) {
+    console.error(error.message);
+  }
+
+  return {
+    props: { offer: { id: docSnapShot.id, data: docSnapShot.data() } },
+  };
 }

@@ -88,10 +88,6 @@ export default function Layout({ children }) {
           >
             Logout
           </a>
-
-          <span className='block w-full text-md text-gray-400 font-normal self-end '>
-            Bar name
-          </span>
         </aside>
 
         {/*  Main content */}
