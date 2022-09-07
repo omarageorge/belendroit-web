@@ -40,6 +40,7 @@ export default function Add() {
 
     const storageRef = ref(storage, selectedFile.name);
     const docRef = doc(db, 'hangouts', auth.currentUser.uid);
+    const timestamp = Date.now();
 
     try {
       const docSnapShot = await getDoc(docRef);
@@ -54,6 +55,7 @@ export default function Add() {
         description: formData.description,
         city: hangoutData.city,
         hangout: hangoutData.hangout,
+        created: timestamp,
       });
 
       setSaving(false);

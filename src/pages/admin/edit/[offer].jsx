@@ -3,7 +3,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import ScaleLoader from 'react-spinners/ScaleLoader';
 import { FaSave, FaTimes } from 'react-icons/fa';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  deleteObject,
+} from 'firebase/storage';
 import { doc, setDoc, getDocFromServer } from 'firebase/firestore';
 
 import Meta from '../../../components/Meta';
@@ -38,6 +43,8 @@ export default function Add({ offer }) {
 
     setSaving(true);
 
+    const timestamp = Date.now();
+
     try {
       if (isFilePicked) {
         const storageRef = ref(storage, selectedFile.name);
@@ -50,9 +57,12 @@ export default function Add({ offer }) {
             image: imageUrl,
             title: formData.title,
             description: formData.description,
+            created: timestamp,
           },
           { merge: true }
         );
+
+        await deleteObject(ref(storage, offer.data.image));
 
         setSaving(false);
         router.push('/admin');
@@ -63,6 +73,7 @@ export default function Add({ offer }) {
         {
           title: formData.title,
           description: formData.description,
+          created: timestamp,
         },
         { merge: true }
       );

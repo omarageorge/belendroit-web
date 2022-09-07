@@ -1,8 +1,13 @@
-import { collection, getDocsFromServer } from 'firebase/firestore';
+import {
+  collection,
+  getDocsFromServer,
+  query,
+  where,
+} from 'firebase/firestore';
 
 import Layout from '../../components/admin/Layout';
 import OfferCard from '../../components/admin/OfferCard';
-import { db } from '../../utils/firebase';
+import { auth, db } from '../../utils/firebase';
 
 export default function Admin({ offers }) {
   if (offers.length === 0) {
@@ -34,8 +39,17 @@ export default function Admin({ offers }) {
 export async function getServerSideProps(context) {
   let offers = [];
 
+  const { hangout } = context.query;
+
+  // const user = auth.currentUser.uid;
+  // console.log('Logging user...');
+  // console.log(user);
+
   try {
-    const querySnapshot = await getDocsFromServer(collection(db, 'offers'));
+    const offersRef = collection(db, 'offers');
+    const q = query(offersRef, where('hangout', '==', 'Billy Bar'));
+
+    const querySnapshot = await getDocsFromServer(q);
 
     querySnapshot.forEach((doc) => {
       offers.push({ id: doc.id, data: doc.data() });
