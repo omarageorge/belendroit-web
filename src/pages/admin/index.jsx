@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  collection,
-  doc,
-  getDocsFromServer,
-  query,
-  where,
-} from 'firebase/firestore';
+import { collection, getDocsFromServer } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 import Layout from '../../components/admin/Layout';
