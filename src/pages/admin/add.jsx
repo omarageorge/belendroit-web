@@ -56,6 +56,7 @@ export default function Add() {
         city: hangoutData.city,
         hangout: hangoutData.hangout,
         created: timestamp,
+        uid: auth.currentUser.uid,
       });
 
       setSaving(false);

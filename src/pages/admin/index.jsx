@@ -1,15 +1,34 @@
+import { useEffect, useState } from 'react';
 import {
   collection,
+  doc,
   getDocsFromServer,
   query,
   where,
 } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 import Layout from '../../components/admin/Layout';
 import OfferCard from '../../components/admin/OfferCard';
-import { auth, db } from '../../utils/firebase';
+import { db } from '../../utils/firebase';
 
 export default function Admin({ offers }) {
+  const [uid, setUid] = useState();
+
+  const hangoutOffers = offers.filter((offer) => offer.data.uid == uid);
+
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setUid(uid);
+      } else {
+        console.log('Nothing...');
+      }
+    });
+  });
+
   if (offers.length === 0) {
     return (
       <Layout>
@@ -23,7 +42,7 @@ export default function Admin({ offers }) {
   return (
     <Layout>
       <section className='grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 gap-6'>
-        {offers.map((offer) => (
+        {hangoutOffers.map((offer) => (
           <OfferCard
             key={offer.id}
             docRef={offer.id}
@@ -39,17 +58,10 @@ export default function Admin({ offers }) {
 export async function getServerSideProps(context) {
   let offers = [];
 
-  const { hangout } = context.query;
-
-  // const user = auth.currentUser.uid;
-  // console.log('Logging user...');
-  // console.log(user);
-
   try {
     const offersRef = collection(db, 'offers');
-    const q = query(offersRef, where('hangout', '==', 'Billy Bar'));
 
-    const querySnapshot = await getDocsFromServer(q);
+    const querySnapshot = await getDocsFromServer(offersRef);
 
     querySnapshot.forEach((doc) => {
       offers.push({ id: doc.id, data: doc.data() });

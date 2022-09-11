@@ -6,7 +6,7 @@ import ScaleLoader from 'react-spinners/ScaleLoader';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 
 import Meta from '../components/Meta';
-import { auth } from '../utils/firebase';
+import { auth, db } from '../utils/firebase';
 import logo from '../assets/belendroid.png';
 import style from '../styles/form.module.scss';
 
