@@ -1,13 +1,52 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import ScaleLoader from 'react-spinners/ScaleLoader';
 import { FaPlusCircle } from 'react-icons/fa';
+import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
+
+import { auth, db } from '../../utils/firebase';
 import Meta from '../../components/Meta';
 import Layout from '../../components/admin/Layout';
 import Title from '../../components/admin/Title';
 import style from '../../styles/admin.module.scss';
 
 export default function Notifications() {
+  const router = useRouter();
   const [saving, setSaving] = useState(false);
+
+  const [formData, setFormData] = useState({
+    title: '',
+    date: '',
+  });
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmission = async (e) => {
+    e.preventDefault();
+
+    setSaving(true);
+
+    const docRef = doc(db, 'hangouts', auth.currentUser.uid);
+
+    try {
+      const docSnapShot = await getDoc(docRef);
+      const hangoutData = docSnapShot.data();
+
+      await addDoc(collection(db, 'notifications'), {
+        title: formData.title,
+        date: formData.date,
+        hangout: hangoutData.hangout,
+city: hangoutData.city,
+      });
+
+      setSaving(false);
+      router.push('/admin');
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   return (
     <>
@@ -16,17 +55,25 @@ export default function Notifications() {
         <Title>Post New notification</Title>
 
         <section id={style.wrapper}>
-          <form>
+          <form onSubmit={handleSubmission}>
             <div className={style.group}>
-              <input type='text' name='title' placeholder='Title' />
+              <input
+                type='text'
+                name='title'
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder='Message'
+              />
             </div>
 
             <div className={style.group}>
-              <input type='date' name='date' />
-            </div>
-
-            <div className={style.group}>
-              <textarea placeholder='Message'></textarea>
+              <input
+                type='text'
+                name='date'
+                placeholder='dd/mm/yyyy'
+                value={formData.date}
+                onChange={handleInputChange}
+              />
             </div>
 
             <div className={style.group}>
@@ -39,7 +86,7 @@ export default function Notifications() {
                   <ScaleLoader color='white' height='1rem' />
                 ) : (
                   <span className='flex  items-center gap-x-2'>
-                    <FaPlusCircle /> <span>Post</span>
+                    <FaPlusCircle /> <span>Send</span>
                   </span>
                 )}
               </button>
