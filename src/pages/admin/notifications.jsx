@@ -38,7 +38,7 @@ export default function Notifications() {
         title: formData.title,
         date: formData.date,
         hangout: hangoutData.hangout,
-city: hangoutData.city,
+        city: hangoutData.city,
       });
 
       setSaving(false);
@@ -79,7 +79,7 @@ city: hangoutData.city,
             <div className={style.group}>
               <button
                 type='submit'
-                disabled={saving && true}
+                disabled={saving ? true : false}
                 className=' bg-gray-900 hover:bg-gray-800 text-white py-4 px-8 rounded-md'
               >
                 {saving ? (

@@ -1,0 +1,19 @@
+#wrapper {
+  @apply w-screen h-screen bg-white p-6;
+}
+
+#table {
+  font-family: sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+
+  tr:nth-child(even) {
+    @apply bg-gray-100;
+  }
+  td,
+  th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+}
