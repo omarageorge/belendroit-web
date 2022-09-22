@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { FaList, FaPlusCircle, FaBell } from 'react-icons/fa';
+import { FaList, FaPlusCircle, FaBell, FaPaperPlane } from 'react-icons/fa';
 
 import Meta from '../Meta';
 import Loader from '../Loader';
@@ -62,23 +62,52 @@ export default function Layout({ children }) {
           </span>
 
           <Link href='/admin'>
-            <a className='flex items-center gap-x-3 py-3 px-4 rounded-md text-white  bg-slate-800 hover:bg-gray-700 transition-all delay-200  ease-linear'>
+            <a
+              className={`flex items-center gap-x-3 py-3 px-4 rounded-md text-white  ${
+                router.pathname === '/admin' ? 'bg-gray-700' : 'bg-slate-800 '
+              } hover:bg-gray-700 transition-all delay-200  ease-linear`}
+            >
               <FaList />
               All Offers
             </a>
           </Link>
 
           <Link href='/admin/add'>
-            <a className='flex items-center gap-x-3 py-3 px-4 rounded-md text-white  bg-slate-800 hover:bg-gray-700 transition-all delay-200  ease-linear'>
+            <a
+              className={`flex items-center gap-x-3 py-3 px-4 rounded-md text-white  ${
+                router.pathname === '/admin/add'
+                  ? 'bg-gray-700'
+                  : 'bg-slate-800 '
+              } hover:bg-gray-700 transition-all delay-200  ease-linear`}
+            >
               <FaPlusCircle />
               Add Offer
             </a>
           </Link>
 
           <Link href='/admin/notifications'>
-            <a className='flex items-center gap-x-3 py-3 px-4 rounded-md text-white  bg-slate-800 hover:bg-gray-700 transition-all delay-200  ease-linear'>
+            <a
+              className={`flex items-center gap-x-3 py-3 px-4 rounded-md text-white  ${
+                router.pathname === '/admin/notifications'
+                  ? 'bg-gray-700'
+                  : 'bg-slate-800 '
+              } hover:bg-gray-700 transition-all delay-200  ease-linear`}
+            >
               <FaBell />
-              Post Notification
+              All Notifications
+            </a>
+          </Link>
+
+          <Link href='/admin/send'>
+            <a
+              className={`flex items-center gap-x-3 py-3 px-4 rounded-md text-white  ${
+                router.pathname === '/admin/send'
+                  ? 'bg-gray-700'
+                  : 'bg-slate-800 '
+              } hover:bg-gray-700 transition-all delay-200  ease-linear`}
+            >
+              <FaPaperPlane />
+              Send Notification
             </a>
           </Link>
 

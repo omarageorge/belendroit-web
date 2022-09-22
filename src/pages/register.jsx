@@ -50,8 +50,16 @@ export default function Register() {
 
       setLoading(false);
     } catch (error) {
-      router.push('/admin');
-      setError(error.message);
+      console.log(error.code);
+
+      if (error.code === 'auth/invalid-email') {
+        setError('Please enter a valid email address.');
+      }
+
+      if (error.code === 'auth/weak-password') {
+        setError('Password must be at least 6 characters.');
+      }
+
       setLoading(false);
     }
   };

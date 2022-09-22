@@ -12,6 +12,7 @@ import style from '../../styles/form.module.scss';
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const router = useRouter();
 
@@ -36,6 +37,17 @@ export default function Home() {
       setLoading(false);
     } catch (error) {
       console.error(error.message);
+
+      if (error.code === 'auth/invalid-email') {
+        setErrorMessage('Please provide a valid email.');
+      }
+
+      if (error.code === 'auth/user-not-found') {
+        setErrorMessage('Username not found.');
+      }
+      if (error.code === 'auth/wrong-password') {
+        setErrorMessage('Invalid password.');
+      }
       setLoading(false);
     }
   };
@@ -62,6 +74,10 @@ export default function Home() {
         >
           <div className={`${style.form_group} text-center cursor-pointer`}>
             <span className='font-medium text-xl'>Administrator</span>
+          </div>
+
+          <div className='mb-3 text-center text-red-600'>
+            <p>{errorMessage}</p>
           </div>
 
           <div className={style.form_group}>

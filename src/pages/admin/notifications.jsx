@@ -1,100 +1,72 @@
-import moment from 'moment';
-import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { FaPlusCircle } from 'react-icons/fa';
-import ScaleLoader from 'react-spinners/ScaleLoader';
-import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
+import { FaTimes } from 'react-icons/fa';
+import {
+  doc,
+  deleteDoc,
+  query,
+  orderBy,
+  collection,
+  getDocsFromServer,
+} from 'firebase/firestore';
 
-import { auth, db } from '../../utils/firebase';
+import { db } from '../../utils/firebase';
 import Meta from '../../components/Meta';
 import Layout from '../../components/admin/Layout';
 import Title from '../../components/admin/Title';
 import style from '../../styles/admin.module.scss';
 
-export default function Notifications() {
+export default function Notifications({ notifications }) {
   const router = useRouter();
-  const [saving, setSaving] = useState(false);
-
-  const [formData, setFormData] = useState({
-    title: '',
-    date: '',
-  });
-
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmission = async (e) => {
-    e.preventDefault();
-
-    setSaving(true);
-
-    const docRef = doc(db, 'hangouts', auth.currentUser.uid);
-
-    try {
-      const docSnapShot = await getDoc(docRef);
-      const hangoutData = docSnapShot.data();
-
-      await addDoc(collection(db, 'notifications'), {
-        title: formData.title,
-        date: moment(formData.date).format('DD/MM/YYYY'),
-        hangout: hangoutData.hangout,
-        city: hangoutData.city,
-      });
-
-      setSaving(false);
-      router.push('/admin');
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
 
   return (
     <>
       <Meta title='Admin: Notifications' />
       <Layout>
-        <Title>Post New notification</Title>
+        <Title>Notifications</Title>
 
-        <section id={style.wrapper}>
-          <form onSubmit={handleSubmission}>
-            <div className={style.group}>
-              <input
-                type='text'
-                name='title'
-                value={formData.title}
-                onChange={handleInputChange}
-                placeholder='Message'
-              />
-            </div>
+        <section id={style.wrapper} className='space-y-4'>
+          {notifications.map((notification) => (
+            <div
+              key={notification.id}
+              className='w-full h-auto bg-gray-200 rounded-md  px-4 py-3 flex justify-between'
+            >
+              {/* Text content */}
+              <div className='space-y-1'>
+                <p className='font-medium'>{notification.data.title}</p>
+                <p className='text-sm'>{notification.data.date}</p>
+              </div>
 
-            <div className={style.group}>
-              <input
-                type='date'
-                name='date'
-                placeholder='dd/mm/yyyy'
-                value={formData.date}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className={style.group}>
-              <button
-                type='submit'
-                disabled={saving ? true : false}
-                className=' bg-gray-900 hover:bg-gray-800 text-white py-4 px-8 rounded-md'
+              {/* Delete Icon */}
+              <div
+                className='text-gray-800 hover:text-red-600 cursor-pointer'
+                onClick={async () => {
+                  await deleteDoc(doc(db, 'notifications', notification.id));
+                  router.reload();
+                }}
               >
-                {saving ? (
-                  <ScaleLoader color='white' height='1rem' />
-                ) : (
-                  <span className='flex  items-center gap-x-2'>
-                    <FaPlusCircle /> <span>Send</span>
-                  </span>
-                )}
-              </button>
+                <FaTimes size={18} />
+              </div>
             </div>
-          </form>
+          ))}
         </section>
       </Layout>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  let notifications = [];
+
+  try {
+    const q = query(collection(db, 'notifications'), orderBy('date', 'desc'));
+    const querySnapshot = await getDocsFromServer(q);
+
+    querySnapshot.forEach((doc) => {
+      notifications.push({ id: doc.id, data: doc.data() });
+    });
+  } catch (error) {
+    console.error(error.message);
+  }
+
+  return { props: { notifications } };
 }
