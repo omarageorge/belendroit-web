@@ -7,7 +7,7 @@ import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 
 import Meta from '../../components/Meta';
 import { auth, db } from '../../utils/firebase';
-import logo from '../../assets/belendroid.png';
+
 import style from '../../styles/form.module.scss';
 
 export default function Home() {
@@ -31,7 +31,7 @@ export default function Home() {
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
 
-      router.push('/admin');
+      router.push('/dashboard/hangouts');
 
       setLoading(false);
     } catch (error) {
@@ -43,7 +43,7 @@ export default function Home() {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        router.push('/admin');
+        router.push('/dashboard/hangouts');
       } else {
         return;
       }
@@ -52,7 +52,7 @@ export default function Home() {
 
   return (
     <>
-      <Meta title='Belendroid: Sign in'></Meta>
+      <Meta title='Super User'></Meta>
 
       <main id={style.wrapper}>
         <form
@@ -61,9 +61,7 @@ export default function Home() {
           autoComplete='false'
         >
           <div className={`${style.form_group} text-center cursor-pointer`}>
-            <Link href='/'>
-              <Image src={logo} width={50} height={50} alt='logo' />
-            </Link>
+            <span className='font-medium text-xl'>Administrator</span>
           </div>
 
           <div className={style.form_group}>
@@ -90,19 +88,8 @@ export default function Home() {
 
           <div className={style.form_group}>
             <button type='submit' disabled={loading ? true : false}>
-              {loading ? (
-                <ScaleLoader color='white' height='1rem' />
-              ) : (
-                'Sign in'
-              )}
+              {loading ? <ScaleLoader color='white' height='1rem' /> : 'Login'}
             </button>
-          </div>
-
-          <div className={style.form_group}>
-            <span>Don&apos;t have an account yet? </span>
-            <Link href='/register'>
-              <a className={style.link}>Register</a>
-            </Link>
           </div>
         </form>
       </main>
