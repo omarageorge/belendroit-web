@@ -1,7 +1,8 @@
+import moment from 'moment';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import ScaleLoader from 'react-spinners/ScaleLoader';
 import { FaPlusCircle } from 'react-icons/fa';
+import ScaleLoader from 'react-spinners/ScaleLoader';
 import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
 
 import { auth, db } from '../../utils/firebase';
@@ -36,7 +37,7 @@ export default function Notifications() {
 
       await addDoc(collection(db, 'notifications'), {
         title: formData.title,
-        date: formData.date,
+        date: moment(formData.date).format('DD/MM/YYYY'),
         hangout: hangoutData.hangout,
         city: hangoutData.city,
       });
@@ -68,7 +69,7 @@ export default function Notifications() {
 
             <div className={style.group}>
               <input
-                type='text'
+                type='date'
                 name='date'
                 placeholder='dd/mm/yyyy'
                 value={formData.date}
