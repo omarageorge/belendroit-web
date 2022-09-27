@@ -40,6 +40,7 @@ export default function Notifications() {
         date: moment(formData.date).format('DD/MM/YYYY'),
         hangout: hangoutData.hangout,
         city: hangoutData.city,
+        uid: auth.currentUser.uid,
       });
 
       setSaving(false);

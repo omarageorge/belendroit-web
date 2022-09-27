@@ -25,6 +25,9 @@ export default function Register() {
     password: '',
   });
 
+  const capitalizeFirstLetter = (str) =>
+    str.charAt(0).toUpperCase() + str.slice(1);
+
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -44,7 +47,7 @@ export default function Register() {
       await setDoc(doc(db, 'hangouts', user.uid), {
         uid: user.uid,
         hangout: formData.hangout,
-        city: formData.city,
+        city: capitalizeFirstLetter(formData.city),
         email: formData.email,
       });
 

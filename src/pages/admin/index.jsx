@@ -23,7 +23,7 @@ export default function Admin({ offers }) {
     });
   });
 
-  if (offers.length === 0) {
+  if (hangoutOffers.length === 0) {
     return (
       <Layout>
         <span className='block text-center text-blue-600'>

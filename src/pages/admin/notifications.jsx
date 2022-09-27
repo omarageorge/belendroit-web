@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { FaTimes } from 'react-icons/fa';
 import {
@@ -8,6 +9,7 @@ import {
   collection,
   getDocsFromServer,
 } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 import { db } from '../../utils/firebase';
 import Meta from '../../components/Meta';
@@ -18,6 +20,34 @@ import style from '../../styles/admin.module.scss';
 export default function Notifications({ notifications }) {
   const router = useRouter();
 
+  const [uid, setUid] = useState();
+
+  const hangoutNotifications = notifications.filter(
+    (notification) => notification.data.uid == uid
+  );
+
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setUid(uid);
+      } else {
+        console.log('Nothing...');
+      }
+    });
+  });
+
+  if (hangoutNotifications.length === 0) {
+    return (
+      <Layout>
+        <span className='block text-center text-blue-600'>
+          No notifications to show.
+        </span>
+      </Layout>
+    );
+  }
+
   return (
     <>
       <Meta title='Admin: Notifications' />
@@ -25,7 +55,7 @@ export default function Notifications({ notifications }) {
         <Title>Notifications</Title>
 
         <section id={style.wrapper} className='space-y-4'>
-          {notifications.map((notification) => (
+          {hangoutNotifications.map((notification) => (
             <div
               key={notification.id}
               className='w-full h-auto bg-gray-200 rounded-md  px-4 py-3 flex justify-between'
