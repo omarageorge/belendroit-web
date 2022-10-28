@@ -22,6 +22,7 @@ export default function Register() {
     hangout: '',
     city: '',
     email: '',
+    url: '',
     password: '',
   });
 
@@ -49,6 +50,7 @@ export default function Register() {
         hangout: formData.hangout,
         city: capitalizeFirstLetter(formData.city),
         email: formData.email,
+        url: formData.url,
       });
 
       setLoading(false);
@@ -126,6 +128,17 @@ export default function Register() {
               value={formData.email}
               onChange={handleInputChange}
               placeholder='Email address'
+              required
+            />
+          </div>
+
+          <div className={style.form_group}>
+            <input
+              type='text'
+              name='url'
+              value={formData.url}
+              onChange={handleInputChange}
+              placeholder='Website or Social media link'
               required
             />
           </div>

@@ -29,6 +29,13 @@ export default function Home() {
     e.preventDefault();
 
     setLoading(true);
+
+    if (formData.email !== 'admin@belendroit.com') {
+      setErrorMessage('Only admin can login');
+      setLoading(false);
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
 
